@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PowerEFCore.DbContexts;
 using PowerEFCore.Models;
 using System;
 using System.Collections.Generic;
@@ -18,23 +20,19 @@ namespace PowerEFCore.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly PowerEFCoreContext _context;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,
+            PowerEFCoreContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return _context.WeatherForcast.ToList();
         }
     }
 }
